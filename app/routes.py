@@ -1,6 +1,6 @@
 from flask import render_template, flash, redirect, url_for, request
 from app import app, db
-from app.forms import EditProfileForm, EmptyForm, LoginForm, RegistrationForm
+from app.forms import EditProfileForm, EmptyForm, LoginForm, PostForm, RegistrationForm
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import Post, User
 from werkzeug.urls import url_parse
@@ -18,18 +18,16 @@ def before_request():
 @app.route('/index')
 @login_required
 def index():
+    form = PostForm()
+    if form.validate_on_submit():
+        post = Post(body=form.post.data, author=current_user)
+        db.session.add(post)
+        db.session.commit()
+        flash('Yor post is now live!')
+        return redirect(url_for('index'))
     user = {'username': 'Eddie'}
-    posts = [
-        {
-            'author': {'username': 'John'},
-            'body': 'Beautiful day in Portland'
-        },
-        {
-            'author': {'username': 'Susan'},
-            'body': 'The Avengers movie was so cool!'
-        }
-    ]
-    return render_template('index.html', title='Home', posts=posts)
+    posts = current_user.followed_posts().all()
+    return render_template('index.html', title='Home',form=form, posts=posts)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -86,7 +84,8 @@ def user(username):
             'body': 'The Avengers movie was so cool!'
         }
     ]
-    return render_template('user.html', user=user, posts=posts)
+    form = EmptyForm()
+    return render_template('user.html', user=user, posts=posts, form=form)
 
 
 @app.route('/edit-profile', methods=['GET', 'POST'])
@@ -114,7 +113,7 @@ def explore():
 
 @app.route('/follow/<username>', methods=['POST'])
 @login_required
-def follow_user(username):
+def follow(username):
     form = EmptyForm()
     if form.validate_on_submit():
 

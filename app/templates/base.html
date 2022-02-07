@@ -1,40 +1,47 @@
-<html>
+{% extends 'bootstrap/base.html' %}
 
-<head>
-    {% if title %}
-    <title>{{title}} - Microblog</title>
+{% block title %}
+{% if title %}
+<title>{{title}} - Microblog</title>
+{% else %}
+<title>Welcome to Microblog</title>
+{% endif %}
+{% endblock title %}
+
+{% block navbar %}
+<nav class="navbar navbar-default">
+    Microblog:
+    <a href="{{ url_for('index') }}">Home</a>
+    
+    {% if current_user.is_anonymous %}
+    <a href="{{ url_for('login') }}">Login</a>
     {% else %}
-    <title>Welcome to Microblog</title>
+    <a href="{{ url_for('explore') }}">Explore</a>
+    <a href="{{ url_for('user', username=current_user.username) }}">Profile</a>
+    <a href="{{ url_for('logout') }}">Logout</a>
     {% endif %}
-</head>
 
-<body>
-    <div>
-        Microblog:
-        <a href="{{ url_for('index') }}">Home</a>
+</nav>
+  
+{% endblock navbar %}
 
-        {% if current_user.is_anonymous %}
-        <a href="{{ url_for('login') }}">Login</a>
-        {% else %}
-        <a href="{{ url_for('explore') }}">Explore</a>
-        <a href="{{ url_for('user', username=current_user.username) }}">Profile</a>
-        <a href="{{ url_for('logout') }}">Logout</a>
+
+    
+    {% block content %}
+    <div class="container">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+
+            {% for message in messages %}
+            <div class="alert alert-info">{{message}}</div>
+            {% endfor %}
+        
         {% endif %}
-
-
-
+        {% endwith %}
+        
+        {% block app_content %}
+            
+        {% endblock app_content %}
+            
     </div>
-    <hr>
-    {% with messages = get_flashed_messages() %}
-    {% if messages %}
-    <ul>
-        {% for message in messages %}
-        <li>{{message}}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-    {% endwith %}
-    {% block content %}{% endblock content %}
-</body>
-
-</html>
+    {% endblock content %}

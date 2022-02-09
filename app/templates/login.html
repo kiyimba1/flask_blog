@@ -1,16 +1,15 @@
 {% extends 'base.html' %}
-{% import 'bootstrap/wtf.html' as wtf %}
+{% from 'bootstrap5/form.html' import render_form %}
 
-{% block app_content %}
+{% block content %}
 <h1>Sign In</h1>
 <div class="row">
     <div class="col-md-4">
-        {{ wtf.quick_form(form)}}
+        {{ render_form(form)}}
     </div>
 </div>
-    <p>{{form.remember_me()}} {{form.remember_me.label}}</p>
-    <p>{{ form.submit() }}</p>
+    
     <p>New User? <a href="{{url_for('register')}}">Register</a></p>
     <p>Forgot Your Password?<a href="{{url_for('reset_password_request') }}">Click here to reset it</a></p>
 
-{% endblock app_content %}
+{% endblock content %}

@@ -1,53 +1,71 @@
-{% extends 'bootstrap/base.html' %}
-
-{% block title %}
-{% if title %}
-<title>{{title}} - Microblog</title>
-{% else %}
-<title>Welcome to Microblog</title>
-{% endif %}
-{% endblock title %}
-
-{% block navbar %}
-<nav class="navbar navbar-default">
-    Microblog:
-    <a href="{{ url_for('index') }}">Home</a>
-    
-    {% if current_user.is_anonymous %}
-    <a href="{{ url_for('login') }}">Login</a>
-    {% else %}
-    <a href="{{ url_for('explore') }}">Explore</a>
-    <a href="{{ url_for('user', username=current_user.username) }}">Profile</a>
-    <a href="{{ url_for('logout') }}">Logout</a>
-    {% endif %}
-
-</nav>
-  
-{% endblock navbar %}
 
 
-    
-    {% block content %}
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    {% block head %}
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    {% block styles %}
+    <!-- Bootstrap CSS -->
+    {{ bootstrap.load_css() }}
+    {% endblock %}
+
+    <title>
+        Microblog
+    </title>
+    {% endblock %}
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Micro</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+                
+                <div class="d-flex">
+                    
+                    {% if current_user.is_anonymous %}
+                        <a class="btn btn-primary" href="{{ url_for('login') }}">Login</a>
+                    {% else %}
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                Actions
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                <li><a class="dropdown-item" href="{{ url_for('explore') }}">Explore</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('user', username=current_user.username) }}">Profile</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('logout') }}">Logout</a></li>
+                            </ul>
+                        </div>
+                    {% endif %}
+                        
+                </div>
+           
+        </div>
+    </nav>
+    <!-- Your page content -->
     <div class="container">
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-
-            {% for message in messages %}
-            <div class="alert alert-info">{{message}}</div>
-            {% endfor %}
+        <div class="align-center">
+            {% block content %}{% endblock %}
+        </div>
         
-        {% endif %}
-        {% endwith %}
-        
-        {% block app_content %}
-            
-        {% endblock app_content %}
-            
     </div>
-    {% endblock content %}
+    
 
     {% block scripts %}
-        {{ super() }}
-        {{ moment.include_moment() }}
-      
-    {% endblock scripts %}
+    
+    {{ bootstrap.load_js() }}
+    {% endblock %}
+</body>
+
+</html>
